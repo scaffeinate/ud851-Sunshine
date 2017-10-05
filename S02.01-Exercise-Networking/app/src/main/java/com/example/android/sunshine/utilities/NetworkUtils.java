@@ -15,9 +15,12 @@
  */
 package com.example.android.sunshine.utilities;
 
+import android.net.Uri;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -28,11 +31,13 @@ public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
+    private static final String SCHEME = "https";
+
     private static final String DYNAMIC_WEATHER_URL =
-            "https://andfun-weather.udacity.com/weather";
+            "andfun-weather.udacity.com/weather";
 
     private static final String STATIC_WEATHER_URL =
-            "https://andfun-weather.udacity.com/staticweather";
+            "andfun-weather.udacity.com/staticweather";
 
     private static final String FORECAST_BASE_URL = STATIC_WEATHER_URL;
 
@@ -64,9 +69,16 @@ public final class NetworkUtils {
      * @param locationQuery The location that will be queried for.
      * @return The URL to use to query the weather server.
      */
-    public static URL buildUrl(String locationQuery) {
-        // TODO (1) Fix this method to return the URL used to query Open Weather Map's API
-        return null;
+    public static URL buildUrl(String locationQuery) throws MalformedURLException {
+        // COMPLETED (1) Fix this method to return the URL used to query Open Weather Map's API
+        return new URL(new Uri.Builder()
+                .scheme(SCHEME)
+                .path(FORECAST_BASE_URL)
+                .appendQueryParameter(QUERY_PARAM, locationQuery)
+                .appendQueryParameter(UNITS_PARAM, units)
+                .appendQueryParameter(FORMAT_PARAM, format)
+                .appendQueryParameter(DAYS_PARAM, String.valueOf(numDays))
+                .build().toString());
     }
 
     /**
