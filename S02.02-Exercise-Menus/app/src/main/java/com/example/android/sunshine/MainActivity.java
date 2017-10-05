@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
+                mWeatherTextView.setText("");
                 loadWeatherData();
                 return true;
         }
