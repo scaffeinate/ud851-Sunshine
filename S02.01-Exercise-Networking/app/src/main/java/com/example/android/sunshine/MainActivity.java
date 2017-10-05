@@ -21,7 +21,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.utilities.NetworkUtils;
+import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 
@@ -50,34 +54,39 @@ public class MainActivity extends AppCompatActivity {
          */
 
         // COMPLETED (9) Call loadWeatherData to perform the network request to get the weather
-        loadWeatherData("San Francisco");
+        loadWeatherData();
     }
 
     // COMPLETED (8) Create a method that will get the user's preferred location and execute your new AsyncTask and call it loadWeatherData
-    private void loadWeatherData(String location) {
+    private void loadWeatherData() {
+        String location = SunshinePreferences.getPreferredWeatherLocation(this);
         new GetForecastTask().execute(location);
     }
 
     // COMPLETED (5) Create a class that extends AsyncTask to perform network requests
     // COMPLETED (6) Override the doInBackground method to perform your network requests
     // COMPLETED (7) Override the onPostExecute method to display the results of the network request
-    class GetForecastTask extends AsyncTask<String, Void, String> {
+    class GetForecastTask extends AsyncTask<String, Void, String[]> {
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected String[] doInBackground(String... strings) {
             try {
-                return NetworkUtils.getResponseFromHttpUrl(NetworkUtils.buildUrl(strings[0]));
-            } catch (IOException e) {
+                String response = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.buildUrl(strings[0]));
+                return OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(MainActivity.this, response);
+            } catch (IOException | JSONException e) {
                 Log.e("MAIN", e.getMessage());
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            if(s != null) {
-                mWeatherTextView.setText(s);
+        protected void onPostExecute(String[] weatherArr) {
+            super.onPostExecute(weatherArr);
+            if(weatherArr != null && weatherArr.length > 0) {
+                for (String weather : weatherArr) {
+                    mWeatherTextView.append(weather);
+                    mWeatherTextView.append("\n\n\n");
+                }
             }
         }
     }
