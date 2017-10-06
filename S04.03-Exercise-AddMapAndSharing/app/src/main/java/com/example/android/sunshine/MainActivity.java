@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapterOn
         } else if (id == R.id.action_map) {
             // COMPLETED (2) Launch the map when the map menu item is clicked
             Intent mapIntent = new Intent(Intent.ACTION_VIEW);
-            mapIntent.setData(new Uri.Builder().scheme("geo").path("0,0").appendQueryParameter("q", "Dallas, TX").build());
+            mapIntent.setData(new Uri.Builder().scheme("geo").path("0,0").build());
 
             if (mapIntent.resolveActivity(getPackageManager()) != null) {
                 startActivity(mapIntent);

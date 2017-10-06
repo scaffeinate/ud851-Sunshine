@@ -47,7 +47,9 @@ public class DetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                shareText("Hello World!");
+                if (mForecast != null && !mForecast.isEmpty()) {
+                    shareText(mForecast);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -56,11 +58,10 @@ public class DetailActivity extends AppCompatActivity {
     private void shareText(String shareText) {
         String mimeType = "text/plain";
         String title = "Share";
-
-        Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+        ShareCompat.IntentBuilder.from(this)
                 .setType(mimeType)
                 .setChooserTitle(title)
-                .setText(shareText).getIntent();
-        startActivity(shareIntent);
+                .setText(shareText)
+                .startChooser();
     }
 }
