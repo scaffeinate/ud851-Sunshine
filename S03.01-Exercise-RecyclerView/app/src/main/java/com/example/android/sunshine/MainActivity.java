@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            mRecyclerViewForecast.setVisibility(View.INVISIBLE);
+            mErrorMessageDisplay.setVisibility(View.INVISIBLE);
             mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
@@ -222,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                 showWeatherDataView();
                 // COMPLETED (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
                 mAdapter.setWeatherData(weatherData);
-                mRecyclerViewForecast.setAdapter(mAdapter);
             } else {
                 showErrorMessage();
             }
@@ -245,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_refresh) {
             // COMPLETED (46) Instead of setting the text to "", set the adapter to null before refreshing
-            mRecyclerViewForecast.setAdapter(null);
             loadWeatherData();
             return true;
         }
