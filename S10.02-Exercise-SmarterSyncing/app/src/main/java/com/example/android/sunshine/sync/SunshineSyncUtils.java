@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.example.android.sunshine.data.WeatherContract;
 
@@ -37,21 +38,26 @@ public class SunshineSyncUtils {
 
     synchronized public static void initialize(final Context context) {
         if (sInitialized) return;
+        sInitialized = true;
+
         new AsyncTask<Void, Void, Cursor>() {
             @Override
             protected Cursor doInBackground(Void... params) {
                 ContentResolver contentResolver = context.getContentResolver();
-                return contentResolver.query(WeatherContract.WeatherEntry.CONTENT_URI, null, null, null, null);
+                String[] projection = {WeatherContract.WeatherEntry._ID};
+                String selection = WeatherContract.WeatherEntry.getSqlSelectForTodayOnwards();
+                return contentResolver.query(WeatherContract.WeatherEntry.CONTENT_URI, projection, selection, null, null);
             }
 
             @Override
             protected void onPostExecute(Cursor cursor) {
                 super.onPostExecute(cursor);
-                if (cursor == null) {
+                if (cursor == null || cursor.getCount() == 0) {
                     startImmediateSync(context);
+                    cursor.close();
                 }
             }
-        };
+        }.execute();
     }
 
     /**
