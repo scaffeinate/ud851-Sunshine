@@ -151,7 +151,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
         final TextView tempHigh;
         final TextView tempLow;
 
-//      COMPLETED (5) Add an ImageView for the weather icon
+        //      COMPLETED (5) Add an ImageView for the weather icon
         final ImageView weatherIcon;
 
         ForecastAdapterViewHolder(View view) {
@@ -196,11 +196,18 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
          /* Read low temperature from the cursor (in degrees celsius) */
             double lowInCelsius = mCursor.getDouble(MainActivity.INDEX_WEATHER_MIN_TEMP);
 
+            String highTemp = SunshineWeatherUtils.formatTemperature(mContext, highInCelsius);
+            String lowTemp = SunshineWeatherUtils.formatTemperature(mContext, lowInCelsius);
+
             date.setText(dateString);
             weatherSummary.setText(description);
-            tempHigh.setText(SunshineWeatherUtils.formatTemperature(mContext, highInCelsius));
-            tempLow.setText(SunshineWeatherUtils.formatTemperature(mContext, lowInCelsius));
+            weatherSummary.setContentDescription(mContext.getString(R.string.a11y_forecast, description));
+            tempHigh.setText(highTemp);
+            tempHigh.setContentDescription(mContext.getString(R.string.a11y_high_temp, highTemp));
+            tempLow.setText(lowTemp);
+            tempLow.setContentDescription(mContext.getString(R.string.a11y_low_temp, lowTemp));
             weatherIcon.setImageResource(SunshineWeatherUtils.getLargeArtResourceIdForWeatherCondition(weatherId));
+            weatherIcon.setContentDescription(mContext.getString(R.string.a11y_forecast_icon));
         }
     }
 }
