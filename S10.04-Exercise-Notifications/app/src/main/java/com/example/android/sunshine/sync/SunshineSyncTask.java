@@ -18,9 +18,15 @@ package com.example.android.sunshine.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v4.content.SharedPreferencesCompat;
+import android.support.v7.preference.PreferenceManager;
 
+import com.example.android.sunshine.R;
+import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.utilities.NetworkUtils;
+import com.example.android.sunshine.utilities.NotificationUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
@@ -73,11 +79,21 @@ public class SunshineSyncTask {
                         WeatherContract.WeatherEntry.CONTENT_URI,
                         weatherValues);
 
-//              TODO (13) Check if notifications are enabled
+//              COMPLETED (13) Check if notifications are enabled
 
-//              TODO (14) Check if a day has passed since the last notification
+//              COMPLETED (14) Check if a day has passed since the last notification
 
-//              TODO (15) If more than a day have passed and notifications are enabled, notify the user
+//              COMPLETED (15) If more than a day have passed and notifications are enabled, notify the user
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean showNotifications = sharedPreferences.getBoolean(context.getString(R.string.show_notifications_key),
+                        context.getResources().getBoolean(R.bool.show_notifications));
+
+                if (showNotifications) {
+                    long timeSinceLastInSeconds = SunshinePreferences.getEllapsedTimeSinceLastNotification(context) / 1000;
+                    if (timeSinceLastInSeconds > (24 * 60 * 60)) {
+                        NotificationUtils.notifyUserOfNewWeather(context);
+                    }
+                }
 
             /* If the code reaches this point, we have successfully performed our sync */
 
