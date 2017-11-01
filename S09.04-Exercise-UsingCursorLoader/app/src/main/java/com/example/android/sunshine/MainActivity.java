@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements
 //      COMPLETED (24) Remove the loadInBackground method declaration
 //      COMPLETED (25) Remove the deliverResult method declaration
 //          COMPLETED (22) If the loader requested is our forecast loader, return the appropriate CursorLoader
-        return new CursorLoader(this, WeatherEntry.CONTENT_URI, mColumns, null, null, null);
+        return new CursorLoader(this, WeatherEntry.CONTENT_URI, mColumns, WeatherEntry.getSqlSelectForTodayOnwards(), null, WeatherEntry.COLUMN_DATE + " ASC");
     }
 
 //  COMPLETED (26) Change onLoadFinished parameter to a Loader<Cursor> instead of a Loader<Cursor>
