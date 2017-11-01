@@ -15,20 +15,50 @@
  */
 package com.example.android.sunshine.sync;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
+
+import com.example.android.sunshine.data.WeatherContract;
 
 
 public class SunshineSyncUtils {
 
-//  TODO (1) Declare a private static boolean field called sInitialized
+    //  COMPLETED (1) Declare a private static boolean field called sInitialized
+    //  COMPLETED (2) Create a synchronized public static void method called initialize
+    //  COMPLETED (3) Only execute this method body if sInitialized is false
+    //  COMPLETED (4) If the method body is executed, set sInitialized to true
+    //  COMPLETED (5) Check to see if our weather ContentProvider is empty
+    //  COMPLETED (6) If it is empty or we have a null Cursor, sync the weather now!
+    private static boolean sInitialized = false;
 
-    //  TODO (2) Create a synchronized public static void method called initialize
-    //  TODO (3) Only execute this method body if sInitialized is false
-    //  TODO (4) If the method body is executed, set sInitialized to true
-    //  TODO (5) Check to see if our weather ContentProvider is empty
-        //  TODO (6) If it is empty or we have a null Cursor, sync the weather now!
+    synchronized public static void initialize(final Context context) {
+        if (sInitialized) return;
+        sInitialized = true;
+
+        new AsyncTask<Void, Void, Cursor>() {
+            @Override
+            protected Cursor doInBackground(Void... params) {
+                ContentResolver contentResolver = context.getContentResolver();
+                String[] projection = {WeatherContract.WeatherEntry._ID};
+                String selection = WeatherContract.WeatherEntry.getSqlSelectForTodayOnwards();
+                return contentResolver.query(WeatherContract.WeatherEntry.CONTENT_URI, projection, selection, null, null);
+            }
+
+            @Override
+            protected void onPostExecute(Cursor cursor) {
+                super.onPostExecute(cursor);
+                if (cursor == null || cursor.getCount() == 0) {
+                    startImmediateSync(context);
+                    cursor.close();
+                }
+            }
+        }.execute();
+    }
 
     /**
      * Helper method to perform a sync immediately using an IntentService for asynchronous

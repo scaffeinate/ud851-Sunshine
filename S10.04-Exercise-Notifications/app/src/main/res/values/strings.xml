@@ -228,4 +228,7 @@
         Low:<xliff:g id="low">%3$s</xliff:g>
     </string>
 
+    <string name="show_notifications_key">show_notifications</string>
+    <string name="show_notifications_label">Show Notifications</string>
+
 </resources>

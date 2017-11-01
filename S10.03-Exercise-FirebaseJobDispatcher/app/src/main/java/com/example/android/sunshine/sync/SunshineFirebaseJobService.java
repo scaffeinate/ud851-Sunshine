@@ -1,3 +1,9 @@
+package com.example.android.sunshine.sync;
+
+import android.os.AsyncTask;
+
+import com.firebase.jobdispatcher.JobParameters;
+import com.firebase.jobdispatcher.JobService;
 /*
  * Copyright (C) 2016 The Android Open Source Project
  *
@@ -13,13 +19,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// TODO (2) Make sure you've imported the jobdispatcher.JobService, not job.JobService
+// COMPLETED (2) Make sure you've imported the jobdispatcher.JobService, not job.JobService
 
-// TODO (3) Add a class called SunshineFirebaseJobService that extends jobdispatcher.JobService
+// COMPLETED (3) Add a class called SunshineFirebaseJobService that extends jobdispatcher.JobService
 
-//  TODO (4) Declare an ASyncTask field called mFetchWeatherTask
+//  COMPLETED (4) Declare an ASyncTask field called mFetchWeatherTask
 
-//  TODO (5) Override onStartJob and within it, spawn off a separate ASyncTask to sync weather data
-//              TODO (6) Once the weather data is sync'd, call jobFinished with the appropriate arguments
+//  COMPLETED (5) Override onStartJob and within it, spawn off a separate ASyncTask to sync weather data
+//  COMPLETED (6) Once the weather data is sync'd, call jobFinished with the appropriate arguments
+//  COMPLETED (7) Override onStopJob, cancel the ASyncTask if it's not null and return true
 
-//  TODO (7) Override onStopJob, cancel the ASyncTask if it's not null and return true
+public class SunshineFirebaseJobService extends JobService {
+
+    private FetchWeatherTask mFetchWeatherTask;
+
+    @Override
+    public boolean onStartJob(JobParameters job) {
+        mFetchWeatherTask = new FetchWeatherTask(job);
+        mFetchWeatherTask.execute();
+        return true;
+    }
+
+    @Override
+    public boolean onStopJob(JobParameters job) {
+        if (mFetchWeatherTask != null && !mFetchWeatherTask.isCancelled()) {
+            mFetchWeatherTask.cancel(true);
+        }
+        return true;
+    }
+
+    protected class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
+
+        private JobParameters mJob;
+
+        protected FetchWeatherTask(JobParameters job) {
+            this.mJob = job;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            SunshineSyncTask.syncWeather(SunshineFirebaseJobService.this);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            jobFinished(mJob, false);
+        }
+    }
+}
