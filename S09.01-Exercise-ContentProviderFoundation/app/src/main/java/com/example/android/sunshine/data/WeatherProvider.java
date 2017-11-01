@@ -48,7 +48,7 @@ public class WeatherProvider extends ContentProvider {
     WeatherDbHelper mOpenHelper;
 
     //  COMPLETED (6) Write a method called buildUriMatcher where you match URI's to their numeric ID
-    private static UriMatcher buildUriMatcher() {
+    protected static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY, WeatherContract.PATH_WEATHER, CODE_WEATHER);
         uriMatcher.addURI(WeatherContract.CONTENT_AUTHORITY, WeatherContract.PATH_WEATHER + "/#", CODE_WEATHER_WITH_DATE);
@@ -103,7 +103,7 @@ public class WeatherProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase mDb = mOpenHelper.getReadableDatabase();
-        Cursor resCursor = null;
+        Cursor resCursor;
         int match = sUriMatcher.match(uri);
         //      COMPLETED (9) Handle queries on both the weather and weather with date URI
 
